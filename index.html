@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monity - Email Confirmation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <img src="img/monity_logo.png" alt="">
+            <h2>Welcome to Monity!</h2>
+            <p>Thank you for joining Monity. We're excited to have you on board. To get started, please click the button below to confirm your email:</p>
+            <button id="confirmButton" onclick="confirmEmail()">Confirm Email</button>
+            <p class="footer-text">If you didn't request this email, please ignore it.</p>
+        </div>
+    </div>
+
+    <script>
+       function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        async function confirmEmail() {
+            const token = getQueryParam('token');
+            const email = getQueryParam('email');
+
+            if (!token || !email) {
+                alert('Invalid confirmation link.');
+                return;
+            }
+
+            try {
+                const response = await fetch('https://oqkpcmpdrsnvrqcoyhmz.supabase.co/auth/v1/verify', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xa3BjbXBkcnNudnJxY295aG16Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTk0MTY4MTAsImV4cCI6MjAzNDk5MjgxMH0.0_aldPL7bZq9rDXQsuh2e6kuOr8fcDClgn_nZTxr9wI'
+                    },
+                    body: JSON.stringify({
+                        token: token,
+                        type: 'signup'
+                    })
+                });
+
+                if (response.ok) {
+                    alert('Email confirmed successfully!');
+        
+                } else {
+                    alert('Failed to confirm email. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error confirming email:', error);
+                alert('An error occurred. Please try again later.');
+            }
+        }
+    </script>
+</body>
+</html>
